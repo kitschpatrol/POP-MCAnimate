@@ -8,6 +8,12 @@
 
 #import "MCProxy.h"
 
+@interface NSObject (MCVelocityProxy)
+
+- (instancetype)velocity;
+- (void)setVelocity:(id)velocity;
+
+@end
 
 @interface MCVelocityProxy : MCProxy
 
@@ -15,27 +21,4 @@
 
 @end
 
-@interface NSObject (MCVelocityProxy)
-
-- (instancetype)pop_velocity;
-- (void)setPop_velocity:(id)velocity;
-
-@end
-
-#ifdef MCANIMATE_SHORTHAND
-
-@interface NSObject (MCVelocityProxy_DropPrefix)
-
-- (instancetype)velocity;
-
-@end
-
-@implementation NSObject (MCVelocityProxy_DropPrefix)
-
-MCSHORTHAND_GETTER(velocity, instancetype)
-MCSHORTHAND_SETTER(Velocity, velocity, id)
-
-@end
-
-#endif
 

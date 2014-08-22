@@ -16,30 +16,31 @@ static char kSpringAnimationProxyKey;
 @implementation MCSpringAnimation
 
 - (instancetype)initWithObject:(id)object {
-    self = [super initWithObject:object];
-    if (self) {
-        _springBounciness = 4;
-        _springSpeed = 12;
-    }
-    return self;
+  self = [super initWithObject:object];
+  if (self) {
+    _springBounciness = 4;
+    _springSpeed = 12;
+  }
+  return self;
 }
 
 + (NSString *)propertyNameForSelector:(SEL)selector {
-    return [self propertyNameFromSetterSelector:selector];
+  return [self propertyNameFromSetterSelector:selector];
 }
 
 - (POPPropertyAnimation *)propertyAnimation {
-    POPSpringAnimation *animation = [POPSpringAnimation animation];
-    animation.springBounciness = self.springBounciness;
-    animation.springSpeed = self.springSpeed;
-    
-    id velocity = [self.object mc_velocityProxy].velocity;
-	if (velocity) {
-		animation.velocity = velocity;
-        [self.object mc_velocityProxy].velocity = nil;
-	}
-    
-    return animation;
+  POPSpringAnimation *animation = [POPSpringAnimation animation];
+  animation.springBounciness = self.springBounciness;
+  animation.springSpeed = self.springSpeed;
+  animation.clampMode = self.springClampMode;
+
+  id velocity = [self.object mc_velocityProxy].velocity;
+  if (velocity) {
+    animation.velocity = velocity;
+    [self.object mc_velocityProxy].velocity = nil;
+  }
+
+  return animation;
 }
 
 @end
@@ -47,32 +48,40 @@ static char kSpringAnimationProxyKey;
 @implementation NSObject (MCSpringAnimation)
 
 - (MCSpringAnimation *)mc_springAnimationProxy {
-	MCSpringAnimation *proxy = objc_getAssociatedObject(self, &kSpringAnimationProxyKey);
-	if (!proxy) {
-		proxy = [[MCSpringAnimation alloc] initWithObject:self];
-		objc_setAssociatedObject(self, &kSpringAnimationProxyKey, proxy, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-	}
-	return proxy;
+  MCSpringAnimation *proxy = objc_getAssociatedObject(self, &kSpringAnimationProxyKey);
+  if (!proxy) {
+    proxy = [[MCSpringAnimation alloc] initWithObject:self];
+    objc_setAssociatedObject(self, &kSpringAnimationProxyKey, proxy, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+  }
+  return proxy;
 }
 
 - (instancetype)pop_spring {
-	return (id) [self mc_springAnimationProxy];
+  return (id)[self mc_springAnimationProxy];
 }
 
 - (CGFloat)pop_springBounciness {
-    return [self mc_springAnimationProxy].springBounciness;
+  return [self mc_springAnimationProxy].springBounciness;
 }
 
 - (void)setPop_springBounciness:(CGFloat)springBounciness {
-    [self mc_springAnimationProxy].springBounciness = springBounciness;
+  [self mc_springAnimationProxy].springBounciness = springBounciness;
 }
 
 - (CGFloat)pop_springSpeed {
-    return [self mc_springAnimationProxy].springSpeed;
+  return [self mc_springAnimationProxy].springSpeed;
 }
 
 - (void)setPop_springSpeed:(CGFloat)springSpeed {
-    [self mc_springAnimationProxy].springSpeed = springSpeed;
+  [self mc_springAnimationProxy].springSpeed = springSpeed;
+}
+
+- (POPAnimationClampFlags)pop_springClampMode {
+  return [self mc_springAnimationProxy].springClampMode;
+}
+
+- (void)setPop_springClampMode:(POPAnimationClampFlags)clampFlags {
+  [self mc_springAnimationProxy].springClampMode = clampFlags;
 }
 
 @end
